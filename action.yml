@@ -13,13 +13,12 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-        cache: pip
 
-    # - name: Cache Pip
-    #   uses: actions/cache@v4
-    #   with:
-    #     path: ${{ env.pythonLocation }}
-    #     key: ${{ runner.os }}-${{ inputs.version }}
+    - name: Cache Pip
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-${{ inputs.version }}
 
     - name: Install Ansible
       run: |
