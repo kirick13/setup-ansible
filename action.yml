@@ -1,9 +1,9 @@
-name: 'kirick13/setup-ansible'
-description: 'Installs Ansible inside GitHub Actions.'
+name: 'kirick13/setup-ansible-core'
+description: 'Installs Ansible Core inside GitHub Actions.'
 
 inputs:
   version:
-    description: 'Version of Ansible to install.'
+    description: 'Version of Ansible Core to install.'
     required: true
 
 runs:
@@ -20,6 +20,6 @@ runs:
         path: ${{ env.pythonLocation }}
         key: ${{ runner.os }}-${{ inputs.version }}
 
-    - name: Install Ansible
+    - name: Install Ansible Core
       run: |
-        pip install ansible==${{ inputs.version }}
+        pip install ansible-core==${{ inputs.version }}
