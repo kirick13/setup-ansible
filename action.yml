@@ -1,0 +1,26 @@
+name: 'kirick13/setup-ansible'
+description: 'Installs Ansible inside GitHub Actions.'
+
+inputs:
+  version:
+    description: 'Version of Ansible to install.'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: pip
+
+    # - name: Cache Pip
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: ${{ env.pythonLocation }}
+    #     key: ${{ runner.os }}-${{ inputs.version }}
+
+    - name: Install Ansible
+      run: |
+        pip install ansible==${{ inputs.version }}
