@@ -6,20 +6,31 @@ inputs:
     description: 'Version of Ansible Core to install.'
     required: true
 
+  collections:
+    description: 'Ansible Galaxy collections to install, one per line.'
+    required: false
+    default: ''
+
 runs:
   using: 'composite'
   steps:
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: '3.12'
 
     - name: Cache Pip
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ${{ env.pythonLocation }}
         key: ${{ runner.os }}-${{ inputs.version }}
 
     - name: Install Ansible Core
+      shell: bash
       run: |
         pip install ansible-core==${{ inputs.version }}
+
+    - name: Install Ansible Collections
+      if: inputs.collections != ''
+      shell: bash
+      run: ansible-galaxy collection install ${{ inputs.collections }}
