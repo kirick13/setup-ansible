@@ -1,0 +1,49 @@
+name: 'kirick13/setup-ansible-core'
+description: 'Installs Ansible Core inside GitHub Actions.'
+
+inputs:
+  version:
+    description: 'Version of Ansible Core to install.'
+    required: true
+
+  python-version:
+    description: 'Python version used to run Ansible.'
+    required: false
+    default: '3.14'
+
+  collections:
+    description: 'Ansible Galaxy collections to install, one per line.'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Cache Pip
+      uses: actions/cache@v6
+      with:
+        path: ${{ env.pythonLocation }}
+        key: pip-${{ runner.os }}-ansible${{ inputs.version }}-python${{ inputs.python-version }}
+
+    - name: Install Ansible Core
+      shell: bash
+      run: |
+        pip install ansible-core==${{ inputs.version }}
+
+    - name: Cache Ansible Collections
+      if: inputs.collections != ''
+      id: cache-collections
+      uses: actions/cache@v5
+      with:
+        path: ~/.ansible/collections
+        key: collections-${{ runner.os }}-ansible${{ inputs.version }}-python${{ inputs.python-version }}-collections-${{ inputs.collections }}
+
+    - name: Install Ansible Collections
+      if: inputs.collections != '' && steps.cache-collections.outputs.cache-hit != 'true'
+      shell: bash
+      run: ansible-galaxy collection install ${{ inputs.collections }}
