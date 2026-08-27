@@ -28,14 +28,22 @@ runs:
       uses: actions/cache@v6
       with:
         path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-${{ inputs.version }}
+        key: pip-${{ runner.os }}-ansible${{ inputs.version }}-python${{ inputs.python-version }}
 
     - name: Install Ansible Core
       shell: bash
       run: |
         pip install ansible-core==${{ inputs.version }}
 
-    - name: Install Ansible Collections
+    - name: Cache Ansible Collections
       if: inputs.collections != ''
+      id: cache-collections
+      uses: actions/cache@v5
+      with:
+        path: ~/.ansible/collections
+        key: collections-${{ runner.os }}-ansible${{ inputs.version }}-python${{ inputs.python-version }}-collections-${{ inputs.collections }}
+
+    - name: Install Ansible Collections
+      if: inputs.collections != '' && steps.cache-collections.outputs.cache-hit != 'true'
       shell: bash
       run: ansible-galaxy collection install ${{ inputs.collections }}
